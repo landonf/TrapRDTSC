@@ -17,9 +17,9 @@ Implementation Notes
 
 TrapRDTSC works by:
 
-    - setting the TSD (time stamp disable) bit in CR4, causing rdtsc to trigger
-      a general protection fault outside of ring 0.
-    - Patching the GP interrupt vector to detect and emulate rdtsc instructions.
+- setting the TSD (time stamp disable) bit in CR4, causing rdtsc to trigger
+  a general protection fault outside of ring 0.
+- Patching the GP interrupt vector to detect and emulate rdtsc instructions.
 
 TrapRDTSC currently uses an unprotected read to fetch the faulting instruction
 from its GP interrupt handler, but does not provide page fault recovery mechanism. As
