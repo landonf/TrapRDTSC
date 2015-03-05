@@ -8,9 +8,9 @@ This is primarily useful when reverse engineering software that uses rdtsc to de
 external instrumentation.
 
 In addition to use in [malware](https://www.f-secure.com/weblog/archives/00002067.html),
-rdtsc is employed by Apple's iCloud service client code as a means to hinder reverse
-engineering and ultimately re-implementations of the key exchange and client identification
-mechanisms.
+`rdtsc` is employed by Mac OS X's iCloud/Spotlight/iMessage/apsd/... client implementations
+as a means to hinder reverse engineering and ultimately re-implementations of the key
+exchange and client identification mechanisms.
 
 Implementation Notes
 --------------------
