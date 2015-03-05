@@ -5,12 +5,10 @@ TrapRDTSC traps and emulates the `rdtsc` (read time stamp counter) and `rdtscp` 
 on Mac OS X/x86-64.
 
 This is primarily useful when reverse engineering software that uses rdtsc to detect
-external instrumentation by comparing rdtsc measurements and taking alternative/non-viable
-execution paths when -- as is likely to occur when tracing with a debugger -- too much
-time has passed.
+external instrumentation.
 
-In addition to rdtsc's use in malware [malware](https://www.f-secure.com/weblog/archives/00002067.html),
-it is most notably also employed by Apple's iCloud service client code as a means to hinder reverse
+In addition to use in malware [malware](https://www.f-secure.com/weblog/archives/00002067.html),
+rdtsc is employed by Apple's iCloud service client code as a means to hinder reverse
 engineering and ultimately re-implementations of the key exchange and client identification
 mechanisms.
 
