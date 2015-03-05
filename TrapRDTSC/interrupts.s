@@ -101,7 +101,7 @@ Lrdtsc_apply:
     shrq $32, %rdx
 
     /* Nothing to restore other than the stack pointer; rdtsc clobbers rdx and rax. */
-    addq $32, %rsp // sizeof(rax, rdx, original handler) + error code inserted by kernel
+    addq $32, %rsp // sizeof(rax, rdx, original handler) + error code pushed by CPU
 
     /* Return to the interrupted code */
     iretq;
