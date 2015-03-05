@@ -16,6 +16,7 @@ Implementation Notes
 --------------------
 
 TrapRDTSC works by:
+
     - setting the TSD (time stamp disable) bit in CR4, causing rdtsc to trigger
       a general protection fault outside of ring 0.
     - Patching the GP interrupt vector to detect and emulate rdtsc instructions.
