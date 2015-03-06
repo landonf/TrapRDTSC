@@ -175,50 +175,64 @@ Lrdtscp:
     movq %rax, 32(%rsp)
 
     /* Delegate to the rdtsc path */
-    jmp Lrdtsc_apply
+    jmp Lrdtsc_fault
 
 Lrdtsc:
     /* Move RIP past the faulting instruction. */
     addq $2, %rax       // rdtsc is a 2 byte instruction
     movq %rax, 32(%rsp)
 
-Lrdtsc_apply:
-    /* Fetch the address of our counter */
+    // fallthrough
+
+/* rax = unused, rdx = unused */
+Lrdtsc_fault:
+    /* Fetch the real TSC (stomping rdx + rax) and produce our 64-bit TSC representation */
+    rdtsc
+    shlq $32, %rdx
+    or %rdx, %rax
+
+    /* Fetch the address of our internal counter */
     lea _traprdt_fake_counter(%rip), %rdx
 
-    /* If the counter is 0 (uninitialized), try to populate it with real data; the goal is to avoid having the
-     * counter move backwards relative to any measurements previously taken. */
+    /* If the counter is 0 (uninitialized), initialize it with real data. */
     cmpq $0, (%rdx)
-    jne Lrdtsc_finish
+    je Lrdtsc_init
+    
+    /* If our fake counter is moving *faster* than the real rdtsc, use the real rdtsc instead. */
+    cmpq %rax, (%rdx)
+    ja Lrdtsc_saturated
 
-    /* Save our counter address in %rcx; we'll need three register operands for cmpxchgq*/
-    pushq %rcx
-    movq %rdx, %rcx
+    /* Apply our fixed rdtsc increment */
+    mov $100000, %rax
+	lock xaddq %rax, (%rdx)
+    addq $100000, %rax
 
-    /* Fetch the real TSC (stomping rdx + rax) */
-    rdtsc
+    jmp Lrdtsc_emul
 
-    /* Produce our 64-bit TSC representation */
-    shlq $32, %rdx
-    or %rax, %rdx
 
+/* rax = 64-bit real TSC value, %rdx = internal counter address */
+Lrdtsc_init:
     /* Attempt atomic initialization of the counter. It doesn't matter if our initialization
      * succeeds; if it fails, it's because initialization succeeded elsewhere. */
-    movq $0, %rax
-    lock cmpxchgq %rdx, (%rcx)
+    pushq %rcx
+    movq %rax, %rcx
 
-    /* Restore %rdx (code below requires that this contain the address of our counter), and %rcx (previously pushed on stack) */
-    movq %rcx, %rdx
+    movq $0, %rax
+    lock cmpxchgq %rcx, (%rdx) // If (%rdx == %rax), load %rcx into %rdx
+
+    movq %rcx, %rax
     popq %rcx
 
-    /* Fall through to the non-initialization path */
+    jmp Lrdtsc_emul
 
-Lrdtsc_finish:
-    /* Perform atomic increment of +100 */
-    mov $5000000, %rax
-	lock xaddq %rax, (%rdx)
-    addq $5000000, %rax
+/* rax = 64-bit real TSC value, %rdx = internal counter address */
+Lrdtsc_saturated:
+    // Nothing to do; our internal counter won't get farther ahead of the real TSC
+    // than one increment iteration, and even in that case, we don't expose that
+    // too-fast timer value to rdtsc consumers
 
+/* rax = 64-bit TSC result, %rdx = unused */
+Lrdtsc_emul:
     /* Populate the results */
     movq %rax, %rdx // high 32 bits
     movl %edx, %eax // low 32 bits
