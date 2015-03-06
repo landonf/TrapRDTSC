@@ -22,6 +22,9 @@ extern "C" {
     /* GP ISR. */
     void trap_rdtsc_gp (void);
     
+    /* PF ISR */
+    void trap_rdtsc_pf (void);
+
     /* Table of original ISRs. */
     uintptr_t traprdt_orig_isr[256] = { 0 };
     
@@ -140,6 +143,10 @@ kern_return_t TrapRDTSC_start (kmod_info_t *ki, void *d) {
      */
     auto idt = CPU::sidt();
     CPU::disableWriteProtect([&idt](){
+        /* Insert our page fault recovery handler. Safely recovers in the case of a page fault while examining %rip
+         * in the RDTSC emulation path. */
+        idt.patch(IDT::INT_PF, (uintptr_t) trap_rdtsc_pf, traprdt_orig_isr + IDT::INT_PF);
+        
         /* Insert our RDTSC-emulating GP fault handler. */
         idt.patch(IDT::INT_GP, (uintptr_t) trap_rdtsc_gp, traprdt_orig_isr + IDT::INT_GP);
         return ftk::unit;

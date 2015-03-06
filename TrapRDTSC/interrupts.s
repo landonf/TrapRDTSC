@@ -25,7 +25,9 @@
  */
 
  /* 
-  * Fetch the address of the original ISR and save it in the designated destination.
+  * Original ISR lookup macro.
+  *
+  * Fetches the address of the original ISR and save it in the designated destination.
   *
   * Arguments:
   *     $0 - Interrupt vector.
@@ -33,12 +35,103 @@
   */
  .macro lookup_orig_isr
     movq ($0 * 8) + _traprdt_orig_isr(%rip), $1 // vector * sizeof(uintptr_t)
-    movq %rax, $1
  .endmacro
 
+ /*
+  * Switch to the section containing our unwind table.
+  *
+  * We implement internal page fault recovery by managing an "unwind" table
+  * of (rip, handler) pairs, jumping to the registered handler if the rip is
+  * found.
+  *
+  * The table and entries are defined using the unwind_* macros below.
+  *
+  * Imagine if eh_frame unwinding was this simple ...
+  */
+.macro UNWIND_SECT
+    .section __TEXT, __trdtsc_unwind
+.endmacro
+
+ /*
+  * Define a new unwind entry.
+  *
+  * Arguments:
+  *     $0 - Unwind handler
+  *
+  * Labels:
+  *     10 - Temporary label used to fetch the address of the potentially faulting instruction.
+  */
+.macro UNWIND_on_fault
+    UNWIND_SECT
+    .align 3
+    .quad 10f // `f` refers to the next definition of this label
+    .quad $0
+    .text
+    10:       // temporary label pointing at the actual potentially faulting instruction
+.endmacro
+
+/* Define a label pointing to the unwind section. We also need to define Lunwind_end below, after all
+ * unwind entries have been defined. */
+UNWIND_SECT
+    .align 3
+    Lunwind_start:
+
+/* Define our ISRs */
 .text
 .align 3
-.globl _trap_rdtsc_gp
+.globl _trap_rdtsc_pf // PF (page fault) handler; implements recovery table support.
+_trap_rdtsc_pf:
+    /* Allocate stack space for %rax, %rdx, %rcx, our pass-through handler's address. */
+    subq $32, %rsp
+
+    /* Save the registers we'll be stomping */
+    movq %rcx, 16(%rsp)
+    movq %rax, 8(%rsp)
+    movq %rdx, (%rsp)
+
+    /* Fetch the address of the original ISR and save it on the stack */
+    lookup_orig_isr 14, %rax
+    movq %rax, 24(%rsp)
+
+    /* Fetch the faulting rip from the stack (it's placed there at interrupt entry). */
+    movq 40(%rsp), %rax
+
+    /* Iterate our handler table */
+    lea Lunwind_start(%rip), %rdx
+    lea Lunwind_end(%rip), %rcx
+
+Lunwind_lookup_iter:
+    /* If we hit the end of the table, there's no match; we can delegate to the original handler */
+    cmpq %rcx, %rdx
+    je Lpassthrough_pf
+
+    /* If the IP matches, delegate to the registered unwind handler */
+    cmpq %rax, (%rdx)
+    je Lpassthrough_unwind
+
+    /* Otherwise, keep looking */
+    addq $16, %rdx
+    jmp Lunwind_lookup_iter
+
+Lpassthrough_unwind:
+    /* Replace the stack-saved ISR address with our unwinder. */
+    movq 0x8(%rdx), %rax
+    movq %rax, 16(%rsp)
+
+    /* Fall through, letting the pass-through code invoke our unwinder */
+
+Lpassthrough_pf:
+    /* Restore rdx/rax. */
+    popq %rcx
+    popq %rdx
+    popq %rax
+
+    /* The original handler's address is now at the top of the stack; we can ret directly to it. */
+    ret
+
+
+.align 3
+.globl _trap_rdtsc_gp // GP (general protection) handler; implements rdtsc emulation
 _trap_rdtsc_gp:
     /* Allocate stack space for %rax, %rdx, and our pass-through handler's address. */
     subq $24, %rsp
@@ -51,11 +144,12 @@ _trap_rdtsc_gp:
     lookup_orig_isr 13, %rax
     movq %rax, 16(%rsp)
 
-    /* Fetch the faulting rip from the stack (it's placed there at interrupt entry) */
+    /* Fetch the faulting rip from the stack (it's placed there at interrupt entry). */
     movq 32(%rsp), %rax
 
-    /* Fetch the first 2 bytes at the faulting IP and check for rdtsc instruction. */
-    // XXX TODO: We need to implement our own page fault handler for cases where reading RIP faults.
+    /* Fetch the first 2 bytes at the faulting IP and check for rdtsc instruction. If a page fault occurs,
+     * we'll simply delegate processing to the original ISR. */
+    UNWIND_on_fault Lpassthrough_gp
     movw (%rax), %dx
     and $0xFFFF, %rdx
     cmp $0x310F, %rdx   // rdtsc == 0x310F
@@ -63,12 +157,14 @@ _trap_rdtsc_gp:
 
     /* If not rdtsc, it might be rdtscp */
     cmp $0xF901, %rdx   // first 2 bytes of rdtscp == 0xF901
-    jne Lpassthrough
+    jne Lpassthrough_gp
 
-    movb 2(%rax), %dl  // fetch and check the last byte of possible rdtscp instruction
+    /* Fetch and check the last byte of possible rdtscp instruction */
+    UNWIND_on_fault Lpassthrough_gp
+    movb 2(%rax), %dl
     and $0xFF, %rdx
     cmp $0x0F, %rdx    // last byte of rdtscp == 0x0F
-    jne Lpassthrough
+    jne Lpassthrough_gp
 
 Lrdtscp:
     /* Populate ECX with IA32_TSC_AUX */
@@ -134,10 +230,14 @@ Lrdtsc_finish:
     /* Return to the interrupted code */
     iretq
 
-Lpassthrough:
+Lpassthrough_gp:
     /* Restore rdx/rax. */
     popq %rdx
     popq %rax
 
     /* The original handler's address is now at the top of the stack; we can ret directly to it. */
     ret
+
+/* Define a label pointing to the end of our unwind section. */
+UNWIND_SECT
+    Lunwind_end:

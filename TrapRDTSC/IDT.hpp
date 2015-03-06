@@ -53,6 +53,9 @@ struct IDT {
     
     /** General protection fault */
     static constexpr ivec_t INT_GP = 13;
+    
+    /** Page fault */
+    static constexpr ivec_t INT_PF = 14;
 
     /**
      * Return the address of the handler for this IDT.
