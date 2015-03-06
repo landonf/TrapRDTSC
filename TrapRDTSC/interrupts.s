@@ -121,10 +121,10 @@ Lpassthrough_unwind:
     /* Fall through, letting the pass-through code invoke our unwinder */
 
 Lpassthrough_pf:
-    /* Restore rdx/rax. */
-    popq %rcx
+    /* Restore saved registers. */
     popq %rdx
     popq %rax
+    popq %rcx
 
     /* The original handler's address is now at the top of the stack; we can ret directly to it. */
     ret
