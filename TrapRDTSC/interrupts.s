@@ -32,8 +32,8 @@
   *     $1 - Destination register.
   */
  .macro lookup_orig_isr
-    movq ($0 * 8) + _traprdt_orig_isr(%rip), $1; // vector * sizeof(uintptr_t)
-    movq %rax, $1;
+    movq ($0 * 8) + _traprdt_orig_isr(%rip), $1 // vector * sizeof(uintptr_t)
+    movq %rax, $1
  .endmacro
 
 .text
@@ -41,45 +41,45 @@
 .globl _trap_rdtsc_gp
 _trap_rdtsc_gp:
     /* Allocate stack space for %rax, %rdx, and our pass-through handler's address. */
-    subq $24, %rsp;
+    subq $24, %rsp
 
     /* Save the registers we'll be stomping */
-    movq %rax, 8(%rsp);
-    movq %rdx, (%rsp);
+    movq %rax, 8(%rsp)
+    movq %rdx, (%rsp)
 
     /* Fetch the address of the original ISR and save it on the stack */
-    lookup_orig_isr 13, %rax;
-    movq %rax, 16(%rsp);
+    lookup_orig_isr 13, %rax
+    movq %rax, 16(%rsp)
 
     /* Fetch the faulting rip from the stack (it's placed there at interrupt entry) */
-    movq 32(%rsp), %rax;
+    movq 32(%rsp), %rax
 
     /* Fetch the first 2 bytes at the faulting IP and check for rdtsc instruction. */
     // XXX TODO: We need to implement our own page fault handler for cases where reading RIP faults.
-    movw (%rax), %dx;
-    and $0xFFFF, %rdx;
-    cmp $0x310F, %rdx;   // rdtsc == 0x310F
-    je Lrdtsc;
+    movw (%rax), %dx
+    and $0xFFFF, %rdx
+    cmp $0x310F, %rdx   // rdtsc == 0x310F
+    je Lrdtsc
 
     /* If not rdtsc, it might be rdtscp */
-    cmp $0xF901, %rdx;   // first 2 bytes of rdtscp == 0xF901
-    jne Lpassthrough;
+    cmp $0xF901, %rdx   // first 2 bytes of rdtscp == 0xF901
+    jne Lpassthrough
 
-    movb 2(%rax), %dl;  // fetch and check the last byte of possible rdtscp instruction
-    and $0xFF, %rdx;
-    cmp $0x0F, %rdx;    // last byte of rdtscp == 0x0F
-    jne Lpassthrough;
+    movb 2(%rax), %dl  // fetch and check the last byte of possible rdtscp instruction
+    and $0xFF, %rdx
+    cmp $0x0F, %rdx    // last byte of rdtscp == 0x0F
+    jne Lpassthrough
 
 Lrdtscp:
     /* Populate ECX with IA32_TSC_AUX */
-    movl $0x0, %ecx;    // TODO - IA32_TSC_AUX MSR should be placed in ecx
+    movl $0x0, %ecx    // TODO - IA32_TSC_AUX MSR should be placed in ecx
 
     /* Move RIP past the faulting instruction. */
     addq $3, %rax       // rdtscp is a 3 byte instruction
     movq %rax, 32(%rsp)
 
     /* Delegate to the rdtsc path */
-    jmp Lrdtsc_apply;
+    jmp Lrdtsc_apply
 
 Lrdtsc:
     /* Move RIP past the faulting instruction. */
@@ -90,6 +90,34 @@ Lrdtsc_apply:
     /* Fetch the address of our counter */
     lea _traprdt_fake_counter(%rip), %rdx
 
+    /* If the counter is 0 (uninitialized), try to populate it with real data; the goal is to avoid having the
+     * counter move backwards relative to any measurements previously taken. */
+    cmpq $0, (%rdx)
+    jne Lrdtsc_finish
+
+    /* Save our counter address in %rcx; we'll need three register operands for cmpxchgq*/
+    pushq %rcx
+    movq %rdx, %rcx
+
+    /* Fetch the real TSC (stomping rdx + rax) */
+    rdtsc
+
+    /* Produce our 64-bit TSC representation */
+    shlq $32, %rdx
+    or %rax, %rdx
+
+    /* Attempt atomic initialization of the counter. It doesn't matter if our initialization
+     * succeeds; if it fails, it's because initialization succeeded elsewhere. */
+    movq $0, %rax
+    lock cmpxchgq %rdx, (%rcx)
+
+    /* Restore %rdx (code below requires that this contain the address of our counter), and %rcx (previously pushed on stack) */
+    movq %rcx, %rdx
+    popq %rcx
+
+    /* Fall through to the non-initialization path */
+
+Lrdtsc_finish:
     /* Perform atomic increment of +100 */
     mov $100, %rax
 	lock xaddq %rax, (%rdx)
@@ -104,12 +132,12 @@ Lrdtsc_apply:
     addq $32, %rsp // sizeof(rax, rdx, original handler) + error code pushed by CPU
 
     /* Return to the interrupted code */
-    iretq;
+    iretq
 
 Lpassthrough:
     /* Restore rdx/rax. */
-    popq %rdx;
-    popq %rax;
+    popq %rdx
+    popq %rax
 
     /* The original handler's address is now at the top of the stack; we can ret directly to it. */
-    ret;
+    ret
