@@ -215,9 +215,9 @@ Lrdtsc_apply:
 
 Lrdtsc_finish:
     /* Perform atomic increment of +100 */
-    mov $100, %rax
+    mov $5000000, %rax
 	lock xaddq %rax, (%rdx)
-    addq $100, %rax
+    addq $5000000, %rax
 
     /* Populate the results */
     movq %rax, %rdx // high 32 bits
