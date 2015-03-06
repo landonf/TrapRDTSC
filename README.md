@@ -20,11 +20,10 @@ TrapRDTSC works by:
 - setting the TSD (time stamp disable) bit in CR4, causing rdtsc to trigger
   a general protection fault outside of ring 0.
 - Patching the GP interrupt vector to detect and emulate rdtsc instructions.
-
-TrapRDTSC currently uses an unprotected read to fetch the faulting instruction
-from its GP interrupt handler, but does not provide page fault recovery mechanism. As
-such, until we add page fault recovery handling, the kext can easily trigger a page
-fault-induced panic.
+- Patching the PF interrupt vector to detect and recover from page faults
+  triggered when fetching the faulting instruction from the GP handler. Note
+  that this does not consult the page table and cannot differentiate
+  between recoverable and non-recoverable faults.
 
 Compatibility Notes
 -------------------
