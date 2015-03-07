@@ -17,7 +17,25 @@
 		0517EC541AA236000037AF0C /* ReferenceType.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0517EC471AA236000037AF0C /* ReferenceType.hpp */; };
 		0517EC561AA236000037AF0C /* ttl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0517EC491AA236000037AF0C /* ttl.hpp */; };
 		0517EC621AA3C62E0037AF0C /* interrupts.s in Sources */ = {isa = PBXBuildFile; fileRef = 0517EC611AA3C62E0037AF0C /* interrupts.s */; };
+		05410DA91AAA92E000081E63 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05410DA81AAA92E000081E63 /* main.cpp */; };
+		05410DB61AAA933600081E63 /* PLCrashMachExceptionPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DAE1AAA933600081E63 /* PLCrashMachExceptionPort.m */; };
+		05410DB71AAA933600081E63 /* PLCrashMachExceptionPortSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DB01AAA933600081E63 /* PLCrashMachExceptionPortSet.m */; };
+		05410DBA1AAA933600081E63 /* PLCrashMachExceptionServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */; };
+		05410DBE1AAA957200081E63 /* PLCrashReporterNSError.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */; };
+		05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBF1AAA95E500081E63 /* mach_exc.defs */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		05410DA41AAA92E000081E63 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0517EC171AA149AA0037AF0C /* kext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kext.cpp; sourceTree = "<group>"; };
@@ -45,10 +63,32 @@
 		0537F78D1A9EBBDF001D343E /* TrapRDTSC.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrapRDTSC.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		0537F7911A9EBBDF001D343E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0537F7B11A9EDBFD001D343E /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		05410DA61AAA92E000081E63 /* rdtsc_emu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rdtsc_emu; sourceTree = BUILT_PRODUCTS_DIR; };
+		05410DA81AAA92E000081E63 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		05410DAD1AAA933600081E63 /* PLCrashMachExceptionPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashMachExceptionPort.h; sourceTree = "<group>"; };
+		05410DAE1AAA933600081E63 /* PLCrashMachExceptionPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionPort.m; sourceTree = "<group>"; };
+		05410DAF1AAA933600081E63 /* PLCrashMachExceptionPortSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashMachExceptionPortSet.h; sourceTree = "<group>"; };
+		05410DB01AAA933600081E63 /* PLCrashMachExceptionPortSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionPortSet.m; sourceTree = "<group>"; };
+		05410DB11AAA933600081E63 /* PLCrashMachExceptionPortSetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionPortSetTests.m; sourceTree = "<group>"; };
+		05410DB21AAA933600081E63 /* PLCrashMachExceptionPortTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionPortTests.m; sourceTree = "<group>"; };
+		05410DB31AAA933600081E63 /* PLCrashMachExceptionServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashMachExceptionServer.h; sourceTree = "<group>"; };
+		05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionServer.m; sourceTree = "<group>"; };
+		05410DB51AAA933600081E63 /* PLCrashMachExceptionServerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionServerTests.m; sourceTree = "<group>"; };
+		05410DBC1AAA957200081E63 /* PLCrashReporterNSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashReporterNSError.h; sourceTree = "<group>"; };
+		05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashReporterNSError.m; sourceTree = "<group>"; };
+		05410DBF1AAA95E500081E63 /* mach_exc.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = mach_exc.defs; path = usr/include/mach/mach_exc.defs; sourceTree = SDKROOT; };
+		05410DC11AAA966200081E63 /* PLCrashAsync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PLCrashAsync.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		0537F7891A9EBBDF001D343E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05410DA31AAA92E000081E63 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -94,6 +134,7 @@
 				0537F78F1A9EBBDF001D343E /* TrapRDTSC */,
 				0517EC581AA292850037AF0C /* ftk */,
 				0517EC3C1AA236000037AF0C /* ttl */,
+				05410DA71AAA92E000081E63 /* rdtsc_emu */,
 				0537F78E1A9EBBDF001D343E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				0537F78D1A9EBBDF001D343E /* TrapRDTSC.kext */,
+				05410DA61AAA92E000081E63 /* rdtsc_emu */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -127,6 +169,35 @@
 				0537F7911A9EBBDF001D343E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		05410DA71AAA92E000081E63 /* rdtsc_emu */ = {
+			isa = PBXGroup;
+			children = (
+				05410DA81AAA92E000081E63 /* main.cpp */,
+				05410DC21AAA97DB00081E63 /* Mach Exception Handler */,
+			);
+			path = rdtsc_emu;
+			sourceTree = "<group>";
+		};
+		05410DC21AAA97DB00081E63 /* Mach Exception Handler */ = {
+			isa = PBXGroup;
+			children = (
+				05410DBF1AAA95E500081E63 /* mach_exc.defs */,
+				05410DBC1AAA957200081E63 /* PLCrashReporterNSError.h */,
+				05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */,
+				05410DAD1AAA933600081E63 /* PLCrashMachExceptionPort.h */,
+				05410DAE1AAA933600081E63 /* PLCrashMachExceptionPort.m */,
+				05410DAF1AAA933600081E63 /* PLCrashMachExceptionPortSet.h */,
+				05410DB01AAA933600081E63 /* PLCrashMachExceptionPortSet.m */,
+				05410DB11AAA933600081E63 /* PLCrashMachExceptionPortSetTests.m */,
+				05410DB21AAA933600081E63 /* PLCrashMachExceptionPortTests.m */,
+				05410DB31AAA933600081E63 /* PLCrashMachExceptionServer.h */,
+				05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */,
+				05410DB51AAA933600081E63 /* PLCrashMachExceptionServerTests.m */,
+				05410DC11AAA966200081E63 /* PLCrashAsync.h */,
+			);
+			name = "Mach Exception Handler";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +239,23 @@
 			productReference = 0537F78D1A9EBBDF001D343E /* TrapRDTSC.kext */;
 			productType = "com.apple.product-type.kernel-extension";
 		};
+		05410DA51AAA92E000081E63 /* rdtsc_emu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05410DAC1AAA92E000081E63 /* Build configuration list for PBXNativeTarget "rdtsc_emu" */;
+			buildPhases = (
+				05410DA21AAA92E000081E63 /* Sources */,
+				05410DA31AAA92E000081E63 /* Frameworks */,
+				05410DA41AAA92E000081E63 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rdtsc_emu;
+			productName = rdtsc_emu;
+			productReference = 05410DA61AAA92E000081E63 /* rdtsc_emu */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -177,6 +265,9 @@
 				LastUpgradeCheck = 0610;
 				TargetAttributes = {
 					0537F78C1A9EBBDF001D343E = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					05410DA51AAA92E000081E63 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
@@ -194,6 +285,7 @@
 			projectRoot = "";
 			targets = (
 				0537F78C1A9EBBDF001D343E /* TrapRDTSC */,
+				05410DA51AAA92E000081E63 /* rdtsc_emu */,
 			);
 		};
 /* End PBXProject section */
@@ -215,6 +307,19 @@
 			files = (
 				0517EC181AA149AA0037AF0C /* kext.cpp in Sources */,
 				0517EC621AA3C62E0037AF0C /* interrupts.s in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05410DA21AAA92E000081E63 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05410DBA1AAA933600081E63 /* PLCrashMachExceptionServer.m in Sources */,
+				05410DA91AAA92E000081E63 /* main.cpp in Sources */,
+				05410DBE1AAA957200081E63 /* PLCrashReporterNSError.m in Sources */,
+				05410DB61AAA933600081E63 /* PLCrashMachExceptionPort.m in Sources */,
+				05410DB71AAA933600081E63 /* PLCrashMachExceptionPortSet.m in Sources */,
+				05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +437,28 @@
 			};
 			name = Release;
 		};
+		05410DAA1AAA92E000081E63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05410DAB1AAA92E000081E63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -352,6 +479,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		05410DAC1AAA92E000081E63 /* Build configuration list for PBXNativeTarget "rdtsc_emu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05410DAA1AAA92E000081E63 /* Debug */,
+				05410DAB1AAA92E000081E63 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
