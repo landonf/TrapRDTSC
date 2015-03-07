@@ -26,8 +26,8 @@
 
 #pragma once
 
-#import "ReferenceValue.hpp"
-#import "ReferenceType.hpp"
+#include "ReferenceValue.hpp"
+#include "ReferenceType.hpp"
 
 namespace ttl { namespace refcount {
 

@@ -715,7 +715,7 @@ static void *exception_server_thread (void *arg) {
                 }
             
                 /* Detect termination messages. */
-                if (request->Head.msgh_id == PLCRASH_TERMINATE_MSGH_ID) {
+                if (request->Head.msgh_id == (mach_msg_id_t) PLCRASH_TERMINATE_MSGH_ID) {
                     /* We intentionally do not acquire a lock here. It is possible that we've been woken
                      * spuriously with the process in an unknown state, in which case we must not call
                      * out to non-async-safe functions */
