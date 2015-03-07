@@ -25,17 +25,21 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
 #include <dispatch/dispatch.h>
 
 #include <mach/mach_vm.h>
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
 #include "PLCrashMachExceptionServer.h"
 #include "PLCrashAsyncThread.h"
-
 #include "Logging.h"
 
 static plcrash_mach_exception_port_set_t orig_port_set;
+
+/* MIB used to fetch the current TSC value from the kernel */
+static int rdtsc_mib[3];
 
 /**
  * Safely add @a offset to @a base_address, returning the result in @a result. If an overflow would occur, false is returned.
@@ -88,16 +92,21 @@ bool plcrash_async_task_memcpy (mach_port_t task, mach_vm_address_t address, mac
 }
 
 static kern_return_t rdtsc_exception_handler (task_t task, thread_t thread, exception_type_t exception_type, mach_exception_data_t code, mach_msg_type_number_t code_count, void *context) {
+    TRLogDebug("handler hit");
+    
     plcrash_gen_regnum_t edx, eax, ecx;
     plcrash_error_t err;
     plcrash_greg_t ip;
     plcrash_greg_t instr_size;
+    size_t tsc_size;
+    uint64_t tsc;
     
     kern_return_t kt;
 
     bool rdtscp = false;
     uint8_t instr[3] = { 0 };
 
+#if 0
     /* GP should map to one of these*/
     if (exception_type != EXC_BAD_ACCESS && exception_type != EXC_BAD_INSTRUCTION)
         goto forwarding;
@@ -106,6 +115,7 @@ static kern_return_t rdtsc_exception_handler (task_t task, thread_t thread, exce
      * IA-32 Architectures Software Developer’s Manual) */
     if (code_count != 2 || code[0] != EXC_I386_GPFLT || code[1] != 0)
         goto forwarding;
+#endif
     
     /* We have to fetch the thread's full state before we can examine RIP */
     plcrash_async_thread_state thr_state;
@@ -149,11 +159,18 @@ static kern_return_t rdtsc_exception_handler (task_t task, thread_t thread, exce
         ecx = (plcrash_gen_regnum_t) PLCRASH_X86_64_RCX;
     }
     
-    /* Emulate rdtsc(p) */
-    // TODO - fetch real rdtsc from kernel
-    plcrash_async_thread_state_set_reg(&thr_state, edx, 0);
-    plcrash_async_thread_state_set_reg(&thr_state, eax, 1337);
+    /* Insert the real rdtsc(p) value */
+    tsc_size = sizeof(tsc);
+    if (sysctl(rdtsc_mib, 3, &tsc, &tsc_size, nullptr, 0) != 0) {
+        TRLogError("sysctl() failed: %s", strerror(errno));
+        goto forwarding;
+    }
+    
+    /* Populate the results */
+    plcrash_async_thread_state_set_reg(&thr_state, edx, (tsc >> 32)); // high 32 bits
+    plcrash_async_thread_state_set_reg(&thr_state, eax, (tsc & 0xFFFFFFFF)); // low 32 bits
 
+    // TODO: IA32_TSC_AUX MSR should be placed in ecx
     if (rdtscp)
         plcrash_async_thread_state_set_reg(&thr_state, ecx, 7331);
 
@@ -180,6 +197,12 @@ int main(int argc, const char * argv[]) {
     NSError *error;
     PLCrashMachExceptionPortSet *previousPortSet;
     
+    size_t mib_size = 3;
+    if (sysctlnametomib("debug.trap_rdtsc.tsc", rdtsc_mib, &mib_size) != 0) {
+        TRLogError("Could not find TrapRDTSC sysctl MIB; is the kext loaded? %s", strerror(errno));
+        return 1;
+    }
+
     /* Create the server */
     const exception_mask_t exc_mask = EXC_MASK_BAD_ACCESS | EXC_MASK_BAD_INSTRUCTION;
     PLCrashMachExceptionServer *server = [[PLCrashMachExceptionServer alloc] initWithCallBack:rdtsc_exception_handler
@@ -215,6 +238,9 @@ int main(int argc, const char * argv[]) {
 
     TRLogInfo("rdtsc emulation server is running");
     
-    dispatch_main();
+    int flag = 1;
+    sysctlbyname("debug.trap_rdtsc.time_stamp_disable", nullptr, nullptr, &flag, sizeof(flag));
+
+    while (1) sleep(10);
     return 0;
 }

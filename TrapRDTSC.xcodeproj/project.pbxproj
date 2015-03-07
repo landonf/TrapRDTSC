@@ -560,6 +560,7 @@
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-format-invalid-specifier",
+					"-Wno-deprecated-register",
 				);
 				WRAPPER_EXTENSION = kext;
 			};
@@ -582,6 +583,7 @@
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-format-invalid-specifier",
+					"-Wno-deprecated-register",
 				);
 				WRAPPER_EXTENSION = kext;
 			};

@@ -28,6 +28,8 @@
 		<string>10.0.0</string>
 		<key>com.apple.kpi.mach</key>
 		<string>10.0.0</string>
+		<key>com.apple.kpi.bsd</key>
+		<string>8.0.0b1</string>
 		<key>com.apple.iokit.IOACPIFamily</key>
 		<string>1.4</string>
 	</dict>

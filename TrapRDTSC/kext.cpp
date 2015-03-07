@@ -1,19 +1,14 @@
 #include <mach/mach_types.h>
 #include <kern/thread.h>
+#include <sys/sysctl.h>
 
 #include "System.hpp"
 #include "Logging.h"
 #include "IDT.hpp"
 
+#include <i386/proc_reg.h>
+
 using namespace traprdt;
-
-
-/**
- * The table of CPUs (indexed by APIC/xAPIC local ID) used to track on which CPUs
- * `CR4` has been modified. Note that while this will continue to work on systems
- * using x2APIC, it /will/ obviously fail on systems with more than 256 processors.
- */
-static uint8_t pending_cpus[256] = { 0 };
 
 extern "C" {
     kern_return_t TrapRDTSC_start (kmod_info_t * ki, void *d);
@@ -35,6 +30,14 @@ extern "C" {
 
 
 namespace traprdt {
+    
+    /**
+     * The table of CPUs (indexed by APIC/xAPIC local ID) used to track on which CPUs
+     * `CR4` has been modified. Note that while this will continue to work on systems
+     * using x2APIC, it /will/ obviously fail on systems with more than 256 processors.
+     */
+    static uint8_t pending_cpus[256] = { 0 };
+
 
     /* Configuration state passed to splat_cr4_thread */
     static struct splat_config {
@@ -131,11 +134,78 @@ namespace traprdt {
         /* Wait for completion */
         while (_splat_config.pending_cpu_count > 0);
     }
-
 }
+
+/* Define a root `debug.trap_rdtsc` sysctl node */
+SYSCTL_NODE(_debug,
+            OID_AUTO,
+            trap_rdtsc,
+            CTLFLAG_RW,
+            0,
+            "TrapRDTSC control interface");
+
+/* Vend the current TSC value at `debug.trap_rdtsc.tsc` */
+static int trdtsc_tsc_sysctl SYSCTL_HANDLER_ARGS {
+    uint64_t tsc = rdtsc64();
+    return sysctl_handle_quad(oidp, &tsc, 0, req);
+}
+
+SYSCTL_PROC(_debug_trap_rdtsc,
+            OID_AUTO,
+            tsc,
+            (CTLTYPE_QUAD|CTLFLAG_RD),
+            0,
+            0,
+            trdtsc_tsc_sysctl,
+            "Q",
+            "Current CPU Time Stamp Counter value");
+
+/* Provide a mechanism for enabling and disabling the system-wide TSD (time stamp disable) bit. */
+static int time_stamp_disable = 0;
+static int trdtsc_time_stamp_disable_sysctl SYSCTL_HANDLER_ARGS {
+    int result = sysctl_handle_int(oidp, &time_stamp_disable, 0, req);
+    if (result != 0)
+        return result;
+    
+    if (time_stamp_disable >= 1)
+        time_stamp_disable = 1;
+    else
+        time_stamp_disable = 0;
+    
+    if (time_stamp_disable == 1) {
+        /* Fetch the number of CPUs */
+        auto cpuCount = System.discoverCPUs() >> [&](const list<CPU> &cpus) {
+            return cpus.size();
+        };
+        
+        /* 'Splat' CR4 across all CPUs, disabling rdtsc */
+        auto splatResult = cpuCount >> [](const size_t logical_cpu_count) {
+            run_on_all_CPUs(logical_cpu_count, true);
+            return unit;
+        };
+    }
+    
+    return result;
+}
+
+SYSCTL_PROC(_debug_trap_rdtsc,
+            OID_AUTO,
+            time_stamp_disable,
+            (CTLTYPE_INT|CTLFLAG_RW),
+            0,
+            0,
+            trdtsc_time_stamp_disable_sysctl,
+            "I",
+            "Set TSD in CR4 on all processors, causing rdtsc to trigger a general protection fault");
 
 /* standard kext entry point */
 kern_return_t TrapRDTSC_start (kmod_info_t *ki, void *d) {
+    /* Register our sysctls */
+    sysctl_register_oid(&sysctl__debug_trap_rdtsc);
+    sysctl_register_oid(&sysctl__debug_trap_rdtsc_tsc);
+    sysctl_register_oid(&sysctl__debug_trap_rdtsc_time_stamp_disable);
+
+#if 0
     /*
      * Patch the IDT, inserting our own interrupt handlers.
      *
@@ -174,9 +244,16 @@ kern_return_t TrapRDTSC_start (kmod_info_t *ki, void *d) {
             return KERN_SUCCESS;
         }
     );
+#endif
+    return KERN_SUCCESS;
 }
 
 kern_return_t TrapRDTSC_stop (kmod_info_t *ki, void *d) {
+    /* De-register our sysctls */
+    sysctl_unregister_oid(&sysctl__debug_trap_rdtsc_time_stamp_disable);
+    sysctl_unregister_oid(&sysctl__debug_trap_rdtsc_tsc);
+    sysctl_unregister_oid(&sysctl__debug_trap_rdtsc);
+
     /* Fetch the number of CPUs */
     auto cpuCount = System.discoverCPUs() >> [&](const list<CPU> &cpus) {
         return cpus.size();
