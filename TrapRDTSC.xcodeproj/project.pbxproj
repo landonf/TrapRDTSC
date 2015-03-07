@@ -23,6 +23,7 @@
 		05410DBA1AAA933600081E63 /* PLCrashMachExceptionServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */; };
 		05410DBE1AAA957200081E63 /* PLCrashReporterNSError.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */; };
 		05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBF1AAA95E500081E63 /* mach_exc.defs */; };
+		05410DFA1AAA9D8500081E63 /* rdtsc_emu_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DF91AAA9D8500081E63 /* rdtsc_emu_tests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -78,6 +79,12 @@
 		05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashReporterNSError.m; sourceTree = "<group>"; };
 		05410DBF1AAA95E500081E63 /* mach_exc.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = mach_exc.defs; path = usr/include/mach/mach_exc.defs; sourceTree = SDKROOT; };
 		05410DC11AAA966200081E63 /* PLCrashAsync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PLCrashAsync.h; sourceTree = "<group>"; };
+		05410DED1AAA9CF200081E63 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		05410DEE1AAA9CF200081E63 /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		05410DF01AAA9CF200081E63 /* XSmallTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XSmallTest.h; sourceTree = "<group>"; };
+		05410DF51AAA9D8500081E63 /* rdtsc_emu_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rdtsc_emu_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05410DF81AAA9D8500081E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		05410DF91AAA9D8500081E63 /* rdtsc_emu_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = rdtsc_emu_tests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +96,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		05410DA31AAA92E000081E63 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05410DF21AAA9D8500081E63 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,6 +149,8 @@
 				0517EC581AA292850037AF0C /* ftk */,
 				0517EC3C1AA236000037AF0C /* ttl */,
 				05410DA71AAA92E000081E63 /* rdtsc_emu */,
+				05410DC31AAA9CF100081E63 /* Dependencies */,
+				05410DF61AAA9D8500081E63 /* rdtsc_emu_tests */,
 				0537F78E1A9EBBDF001D343E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -144,6 +160,7 @@
 			children = (
 				0537F78D1A9EBBDF001D343E /* TrapRDTSC.kext */,
 				05410DA61AAA92E000081E63 /* rdtsc_emu */,
+				05410DF51AAA9D8500081E63 /* rdtsc_emu_tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,6 +215,49 @@
 				05410DC11AAA966200081E63 /* PLCrashAsync.h */,
 			);
 			name = "Mach Exception Handler";
+			sourceTree = "<group>";
+		};
+		05410DC31AAA9CF100081E63 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				05410DC41AAA9CF100081E63 /* ftl */,
+				05410DEE1AAA9CF200081E63 /* README.txt */,
+				05410DEF1AAA9CF200081E63 /* XSmallTest */,
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
+		05410DC41AAA9CF100081E63 /* ftl */ = {
+			isa = PBXGroup;
+			children = (
+				05410DED1AAA9CF200081E63 /* LICENSE */,
+			);
+			path = ftl;
+			sourceTree = "<group>";
+		};
+		05410DEF1AAA9CF200081E63 /* XSmallTest */ = {
+			isa = PBXGroup;
+			children = (
+				05410DF01AAA9CF200081E63 /* XSmallTest.h */,
+			);
+			path = XSmallTest;
+			sourceTree = "<group>";
+		};
+		05410DF61AAA9D8500081E63 /* rdtsc_emu_tests */ = {
+			isa = PBXGroup;
+			children = (
+				05410DF91AAA9D8500081E63 /* rdtsc_emu_tests.m */,
+				05410DF71AAA9D8500081E63 /* Supporting Files */,
+			);
+			path = rdtsc_emu_tests;
+			sourceTree = "<group>";
+		};
+		05410DF71AAA9D8500081E63 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				05410DF81AAA9D8500081E63 /* Info.plist */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,6 +316,23 @@
 			productReference = 05410DA61AAA92E000081E63 /* rdtsc_emu */;
 			productType = "com.apple.product-type.tool";
 		};
+		05410DF41AAA9D8500081E63 /* rdtsc_emu_tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05410DFB1AAA9D8500081E63 /* Build configuration list for PBXNativeTarget "rdtsc_emu_tests" */;
+			buildPhases = (
+				05410DF11AAA9D8500081E63 /* Sources */,
+				05410DF21AAA9D8500081E63 /* Frameworks */,
+				05410DF31AAA9D8500081E63 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rdtsc_emu_tests;
+			productName = rdtsc_emu_tests;
+			productReference = 05410DF51AAA9D8500081E63 /* rdtsc_emu_tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -268,6 +345,9 @@
 						CreatedOnToolsVersion = 6.1.1;
 					};
 					05410DA51AAA92E000081E63 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					05410DF41AAA9D8500081E63 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
@@ -286,12 +366,20 @@
 			targets = (
 				0537F78C1A9EBBDF001D343E /* TrapRDTSC */,
 				05410DA51AAA92E000081E63 /* rdtsc_emu */,
+				05410DF41AAA9D8500081E63 /* rdtsc_emu_tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0537F78B1A9EBBDF001D343E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05410DF31AAA9D8500081E63 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -320,6 +408,14 @@
 				05410DB61AAA933600081E63 /* PLCrashMachExceptionPort.m in Sources */,
 				05410DB71AAA933600081E63 /* PLCrashMachExceptionPortSet.m in Sources */,
 				05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05410DF11AAA9D8500081E63 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05410DFA1AAA9D8500081E63 /* rdtsc_emu_tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +570,10 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-I$(PROJECT_DIR)/Dependencies/ftl",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -483,6 +583,46 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-I$(PROJECT_DIR)/Dependencies/ftl",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		05410DFC1AAA9D8500081E63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = rdtsc_emu_tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05410DFD1AAA9D8500081E63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = rdtsc_emu_tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -513,6 +653,15 @@
 			buildConfigurations = (
 				05410DAA1AAA92E000081E63 /* Debug */,
 				05410DAB1AAA92E000081E63 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05410DFB1AAA9D8500081E63 /* Build configuration list for PBXNativeTarget "rdtsc_emu_tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05410DFC1AAA9D8500081E63 /* Debug */,
+				05410DFD1AAA9D8500081E63 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
