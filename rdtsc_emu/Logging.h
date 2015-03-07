@@ -24,10 +24,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
+#pragma once
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
-}
+#include <syslog.h>
+#include <stdio.h>
+
+/* Define to 0 to disable debug logging */
+#define TRAP_RDTSC_DEBUG_LOG 1
+
+/** Log a message. It will be automatically prefixed with the driver name. */
+#define TRLog(level, fmt,...) do { \
+    syslog(level, "rdtsc_emu: " fmt, ## __VA_ARGS__); \
+    fprintf(stderr, "rdtsc_emu: " fmt "\n", ## __VA_ARGS__); \
+} while (0)
+
+/** Log an error message. */
+#define TRLogError(fmt,...) TRLog(LOG_ERR, "[ERROR] " fmt, ## __VA_ARGS__)
+
+/** Log an informative message. */
+#define TRLogInfo(fmt,...) TRLog(LOG_INFO, fmt, ## __VA_ARGS__)
+
+#if TRAP_RDTSC_DEBUG_LOG
+    /** Log a debugging message. */
+    #define TRLogDebug(fmt, ...) TRLog(LOG_DEBUG, "[DEBUG] " fmt, ## __VA_ARGS__)
+#else /* TRAP_RDTSC_DEBUG_LOG */
+    #define TRLogDebug(...) do { } while (0)
+#endif /* !TRAP_RDTSC_DEBUG_LOG */

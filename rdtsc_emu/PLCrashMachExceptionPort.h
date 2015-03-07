@@ -54,9 +54,11 @@
                            behavior: (exception_behavior_t) behavior
                              flavor: (thread_state_flavor_t) flavor;
 
++ (PLCrashMachExceptionPortSet *) exceptionPortsForHost: (host_t) host mask: (exception_mask_t) mask error: (NSError **) outError;
 + (PLCrashMachExceptionPortSet *) exceptionPortsForTask: (task_t) task mask: (exception_mask_t) mask error: (NSError **) outError;
 + (PLCrashMachExceptionPortSet *) exceptionPortsForThread: (thread_t) thread mask: (exception_mask_t) mask error: (NSError **) outError;
 
+- (BOOL) registerForHost: (host_t) host previousPortSet: (PLCrashMachExceptionPortSet **) ports error: (NSError **) outError;
 - (BOOL) registerForTask: (task_t) task previousPortSet: (PLCrashMachExceptionPortSet **) ports error: (NSError **) outError;
 - (BOOL) registerForThread: (thread_t) thread previousPortSet: (PLCrashMachExceptionPortSet **) ports error: (NSError **) outError;
 

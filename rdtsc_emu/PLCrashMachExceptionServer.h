@@ -35,6 +35,10 @@
 #import "PLCrashMachExceptionPort.h"
 #include <AvailabilityMacros.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * On Mac OS X, we are free to use the 64-bit mach_* APIs. No headers are provided for these,
  * but the MIG defs are available and may be included directly in the build.
@@ -106,3 +110,7 @@ kern_return_t PLCrashMachExceptionForward (task_t task,
 @property(nonatomic, readonly) thread_t serverThread;
 
 @end
+
+#ifdef __cplusplus
+}
+#endif

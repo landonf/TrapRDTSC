@@ -1,7 +1,6 @@
 /*
  * Author: Landon Fuller <landonf@plausible.coop>
  *
- * Copyright (c) 2015 Landon Fuller <landon@landonf.org>
  * Copyright (c) 2008-2015 Plausible Labs Cooperative, Inc.
  * All rights reserved.
  *
@@ -27,50 +26,35 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
-
-/* PLCrashReporter compatibility types/defines */
-#include <assert.h>
-
-#include "Logging.h"
-#define PLCF_DEBUG(...) TRLogDebug(__VA_ARGS__)
-
-#define PLCF_ASSERT(expr) assert(expr)
+#include "PLCrashAsync.h"
 
 /**
- * @ingroup plcrash_async
- * Error return codes.
+ * Return an error description for the given plcrash_error_t.
  */
-typedef enum  {
-    /** Success */
-    PLCRASH_ESUCCESS = 0,
+const char *plcrash_async_strerror (plcrash_error_t error) {
+    switch (error) {
+        case PLCRASH_ESUCCESS:
+            return "No error";
+        case PLCRASH_EUNKNOWN:
+            return "Unknown error";
+        case PLCRASH_OUTPUT_ERR:
+            return "Output file can not be opened (or written to)";
+        case PLCRASH_ENOMEM:
+            return "No memory available";
+        case PLCRASH_ENOTSUP:
+            return "Operation not supported";
+        case PLCRASH_EINVAL:
+            return "Invalid argument";
+        case PLCRASH_EINTERNAL:
+            return "Internal error";
+        case PLCRASH_EACCESS:
+            return "Access denied";
+        case PLCRASH_ENOTFOUND:
+            return "Not found";
+        case PLCRASH_EINVALID_DATA:
+            return "The input data is in an unknown or invalid format.";
+    }
     
-    /** Unknown error (if found, is a bug) */
-    PLCRASH_EUNKNOWN,
-    
-    /** The output file can not be opened or written to */
-    PLCRASH_OUTPUT_ERR,
-    
-    /** No memory available (allocation failed) */
-    PLCRASH_ENOMEM,
-    
-    /** Unsupported operation */
-    PLCRASH_ENOTSUP,
-    
-    /** Invalid argument */
-    PLCRASH_EINVAL,
-    
-    /** Internal error */
-    PLCRASH_EINTERNAL,
-    
-    /** Access to the specified resource is denied. */
-    PLCRASH_EACCESS,
-    
-    /** The requested resource could not be found. */
-    PLCRASH_ENOTFOUND,
-    
-    /** The input data is in an unknown or invalid format. */
-    PLCRASH_EINVALID_DATA,
-} plcrash_error_t;
-
-const char *plcrash_async_strerror (plcrash_error_t error);
+    /* Should be unreachable */
+    return "Unhandled error code";
+}

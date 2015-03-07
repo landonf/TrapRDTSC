@@ -46,6 +46,40 @@
 @synthesize flavor = _flavor;
 
 /**
+ * Return the current PLCrashMachExceptionPortState set registered for a @a host and @a mask.
+ *
+ * @param host The host for which exception port state will be retrieved.
+ * @param mask The exception mask for which exception port state will be retrieved.
+ * @param outError A pointer to an NSError object variable. If an error occurs, this pointer
+ * will contain an error object indicating why the Mach exception port state could not be fetched. If no error
+ * occurs, this parameter will be left unmodified. You may specify nil for this parameter, and no error information
+ * will be provided.
+ *
+ * @return Returns the set of registered port states on success, or nil on failure.
+ */
++ (PLCrashMachExceptionPortSet *) exceptionPortsForHost: (host_t) host mask: (exception_mask_t) mask error: (NSError **) outError {
+    plcrash_mach_exception_port_set_t states;
+    
+    kern_return_t kr;
+    
+    /* Fetch the current ports */
+    kr = host_get_exception_ports(host,
+                                  mask,
+                                  states.masks,
+                                  &states.count,
+                                  states.ports,
+                                  states.behaviors,
+                                  states.flavors);
+    
+    if (kr != KERN_SUCCESS) {
+        plcrash_populate_mach_error(outError, kr, @"Failed to fetch mach exception ports");
+        return nil;
+    }
+    
+    return [[PLCrashMachExceptionPortSet alloc] initWithAsyncSafeRepresentation: states];
+}
+
+/**
  * Return the current PLCrashMachExceptionPortState set registered for a @a task and @a mask.
  *
  * @param task The task for which exception port state will be retrieved.
@@ -151,6 +185,65 @@
     if (MACH_PORT_VALID(_port) && (kt = mach_port_mod_refs(mach_task_self(), _port, MACH_PORT_RIGHT_SEND, -1)) != KERN_SUCCESS) {
         NSLog(@"Unexpected error incrementing mach port reference: %d", kt);
     }
+}
+
+
+/**
+ * Atomically set the Mach exception server port managed by the receiver as the @a host's Mach exception server, returning
+ * the previously configured ports in @a portStates.
+ *
+ * @param host The host for which the Mach exception server should be set.
+ * @param ports On success, will contain a set of previously registered ports for the exception masks claimed
+ * by the receiver. If NULL, the previous ports will not be provided.
+ * @param outError A pointer to an NSError object variable. If an error occurs, this pointer
+ * will contain an error object indicating why the Mach exception port could not be registered. If no error
+ * occurs, this parameter will be left unmodified. You may specify nil for this parameter, and no error information
+ * will be provided.
+ * @return YES if the mach exception port state was successfully registered for @a host, NO on error.
+ */
+- (BOOL) registerForHost: (host_t) host previousPortSet: (PLCrashMachExceptionPortSet **) ports error: (NSError **) outError {
+    /*
+     * The kernel host_swap_exception_ports() implementation fails to clear the MACH_EXCEPTION_CODES flag prior to
+     * validating the requested behavior, returning KERN_INVALID_ARGUMENT should the bit be set.
+     *
+     * This issue does not exist with host_set_exception_ports().
+     *
+     * We work around this by performing a non-atomic swap when MACH_EXCEPTION_CODES is enabled.
+     */
+    plcrash_mach_exception_port_set_t prev;
+    
+    kern_return_t kr;
+    
+    if (_behavior & MACH_EXCEPTION_CODES) {
+        kr = host_get_exception_ports(host, _mask, prev.masks, &prev.count, prev.ports, prev.behaviors, prev.flavors);
+        if (kr != KERN_SUCCESS) {
+            plcrash_populate_mach_error(outError, kr, @"Failed to swap mach exception ports");
+            return NO;
+        }
+        
+        kr = host_set_exception_ports(host, _mask, _port, _behavior, _flavor);
+    } else {
+        kr = host_swap_exception_ports(host,
+                                       _mask,
+                                       _port,
+                                       _behavior,
+                                       _flavor,
+                                       prev.masks,
+                                       &prev.count,
+                                       prev.ports,
+                                       prev.behaviors,
+                                       prev.flavors);
+    }
+
+    if (kr != KERN_SUCCESS) {
+        plcrash_populate_mach_error(outError, kr, @"Failed to swap mach exception ports");
+        return NO;
+    }
+    
+    if (ports != NULL)
+        *ports = [[PLCrashMachExceptionPortSet alloc] initWithAsyncSafeRepresentation: prev];
+    
+    return YES;
 }
 
 /**

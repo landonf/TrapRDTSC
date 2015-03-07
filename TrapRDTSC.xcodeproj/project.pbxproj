@@ -17,13 +17,16 @@
 		0517EC541AA236000037AF0C /* ReferenceType.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0517EC471AA236000037AF0C /* ReferenceType.hpp */; };
 		0517EC561AA236000037AF0C /* ttl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 0517EC491AA236000037AF0C /* ttl.hpp */; };
 		0517EC621AA3C62E0037AF0C /* interrupts.s in Sources */ = {isa = PBXBuildFile; fileRef = 0517EC611AA3C62E0037AF0C /* interrupts.s */; };
-		05410DA91AAA92E000081E63 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05410DA81AAA92E000081E63 /* main.cpp */; };
+		05410DA91AAA92E000081E63 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 05410DA81AAA92E000081E63 /* main.mm */; };
 		05410DB61AAA933600081E63 /* PLCrashMachExceptionPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DAE1AAA933600081E63 /* PLCrashMachExceptionPort.m */; };
 		05410DB71AAA933600081E63 /* PLCrashMachExceptionPortSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DB01AAA933600081E63 /* PLCrashMachExceptionPortSet.m */; };
 		05410DBA1AAA933600081E63 /* PLCrashMachExceptionServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */; };
 		05410DBE1AAA957200081E63 /* PLCrashReporterNSError.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBD1AAA957200081E63 /* PLCrashReporterNSError.m */; };
 		05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */ = {isa = PBXBuildFile; fileRef = 05410DBF1AAA95E500081E63 /* mach_exc.defs */; };
 		05410DFA1AAA9D8500081E63 /* rdtsc_emu_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05410DF91AAA9D8500081E63 /* rdtsc_emu_tests.m */; };
+		05410E091AAAB57500081E63 /* PLCrashAsyncThread_x86.c in Sources */ = {isa = PBXBuildFile; fileRef = 05410E051AAAB57500081E63 /* PLCrashAsyncThread_x86.c */; };
+		05410E0A1AAAB57500081E63 /* PLCrashAsyncThread.c in Sources */ = {isa = PBXBuildFile; fileRef = 05410E071AAAB57500081E63 /* PLCrashAsyncThread.c */; };
+		05410E0D1AAAB7AE00081E63 /* PLCrashAsync.c in Sources */ = {isa = PBXBuildFile; fileRef = 05410E0C1AAAB7AE00081E63 /* PLCrashAsync.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -65,7 +68,7 @@
 		0537F7911A9EBBDF001D343E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0537F7B11A9EDBFD001D343E /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		05410DA61AAA92E000081E63 /* rdtsc_emu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rdtsc_emu; sourceTree = BUILT_PRODUCTS_DIR; };
-		05410DA81AAA92E000081E63 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		05410DA81AAA92E000081E63 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		05410DAD1AAA933600081E63 /* PLCrashMachExceptionPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashMachExceptionPort.h; sourceTree = "<group>"; };
 		05410DAE1AAA933600081E63 /* PLCrashMachExceptionPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLCrashMachExceptionPort.m; sourceTree = "<group>"; };
 		05410DAF1AAA933600081E63 /* PLCrashMachExceptionPortSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashMachExceptionPortSet.h; sourceTree = "<group>"; };
@@ -85,6 +88,12 @@
 		05410DF51AAA9D8500081E63 /* rdtsc_emu_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rdtsc_emu_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05410DF81AAA9D8500081E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05410DF91AAA9D8500081E63 /* rdtsc_emu_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = rdtsc_emu_tests.m; sourceTree = "<group>"; };
+		05410DFE1AAAA21400081E63 /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		05410E051AAAB57500081E63 /* PLCrashAsyncThread_x86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PLCrashAsyncThread_x86.c; sourceTree = "<group>"; };
+		05410E061AAAB57500081E63 /* PLCrashAsyncThread_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashAsyncThread_x86.h; sourceTree = "<group>"; };
+		05410E071AAAB57500081E63 /* PLCrashAsyncThread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PLCrashAsyncThread.c; sourceTree = "<group>"; };
+		05410E081AAAB57500081E63 /* PLCrashAsyncThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLCrashAsyncThread.h; sourceTree = "<group>"; };
+		05410E0C1AAAB7AE00081E63 /* PLCrashAsync.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PLCrashAsync.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,7 +200,9 @@
 		05410DA71AAA92E000081E63 /* rdtsc_emu */ = {
 			isa = PBXGroup;
 			children = (
-				05410DA81AAA92E000081E63 /* main.cpp */,
+				05410DA81AAA92E000081E63 /* main.mm */,
+				05410DFE1AAAA21400081E63 /* Logging.h */,
+				05410E0B1AAAB57800081E63 /* Thread State */,
 				05410DC21AAA97DB00081E63 /* Mach Exception Handler */,
 			);
 			path = rdtsc_emu;
@@ -213,6 +224,7 @@
 				05410DB41AAA933600081E63 /* PLCrashMachExceptionServer.m */,
 				05410DB51AAA933600081E63 /* PLCrashMachExceptionServerTests.m */,
 				05410DC11AAA966200081E63 /* PLCrashAsync.h */,
+				05410E0C1AAAB7AE00081E63 /* PLCrashAsync.c */,
 			);
 			name = "Mach Exception Handler";
 			sourceTree = "<group>";
@@ -258,6 +270,17 @@
 				05410DF81AAA9D8500081E63 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		05410E0B1AAAB57800081E63 /* Thread State */ = {
+			isa = PBXGroup;
+			children = (
+				05410E051AAAB57500081E63 /* PLCrashAsyncThread_x86.c */,
+				05410E061AAAB57500081E63 /* PLCrashAsyncThread_x86.h */,
+				05410E071AAAB57500081E63 /* PLCrashAsyncThread.c */,
+				05410E081AAAB57500081E63 /* PLCrashAsyncThread.h */,
+			);
+			name = "Thread State";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -402,10 +425,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05410E0A1AAAB57500081E63 /* PLCrashAsyncThread.c in Sources */,
 				05410DBA1AAA933600081E63 /* PLCrashMachExceptionServer.m in Sources */,
-				05410DA91AAA92E000081E63 /* main.cpp in Sources */,
+				05410DA91AAA92E000081E63 /* main.mm in Sources */,
+				05410E0D1AAAB7AE00081E63 /* PLCrashAsync.c in Sources */,
 				05410DBE1AAA957200081E63 /* PLCrashReporterNSError.m in Sources */,
 				05410DB61AAA933600081E63 /* PLCrashMachExceptionPort.m in Sources */,
+				05410E091AAAB57500081E63 /* PLCrashAsyncThread_x86.c in Sources */,
 				05410DB71AAA933600081E63 /* PLCrashMachExceptionPortSet.m in Sources */,
 				05410DC01AAA95E500081E63 /* mach_exc.defs in Sources */,
 			);
